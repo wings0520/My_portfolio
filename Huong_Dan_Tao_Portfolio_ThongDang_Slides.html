@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quy Trình Tạo Website Portfolio Từ Template GitHub — Hướng Dẫn Từng Bước Từ A-Z</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Kanit:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #09060E;
+      --surface: #120B1F;
+      --surface-glass: rgba(18, 11, 31, 0.88);
+      --surface-card: rgba(22, 13, 38, 0.78);
+      --border-card: rgba(192, 132, 252, 0.25);
+      --ink: #F3EEF9;
+      --ink-dim: #A79BB8;
+      --purple: #A855F7;
+      --purple-light: #C084FC;
+      --purple-bright: #D8B4FE;
+      --purple-dark: #6B21A8;
+      --purple-glow: rgba(168, 85, 247, 0.45);
+      --cyan: #06B6D4;
+      --cyan-glow: rgba(6, 182, 212, 0.4);
+      --fire: #FF5500;
+      --fire-bright: #FFAA55;
+      --fire-glow: rgba(255, 85, 0, 0.45);
+      --emerald: #10B981;
+      --code-bg: #0b0713;
+      --font-display: 'Kanit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: var(--font-body);
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      user-select: none;
+      background-image: 
+        radial-gradient(circle at 10% 15%, rgba(168, 85, 247, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 90% 85%, rgba(6, 182, 212, 0.18) 0%, transparent 42%),
+        radial-gradient(ellipse at 50% 50%, #0d0716 0%, #09060E 100%);
+    }
+
+    /* Deck Header */
+    header.deck-header {
+      height: 52px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(192, 132, 252, 0.18);
+      background: rgba(14, 8, 24, 0.85);
+      backdrop-filter: blur(14px);
+      z-index: 100;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-badge {
+      background: linear-gradient(135deg, var(--purple-dark), #380e5e);
+      color: var(--purple-bright);
+      padding: 4px 12px;
+      border-radius: 99px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      border: 1px solid rgba(192, 132, 252, 0.4);
+      letter-spacing: 0.8px;
+      font-family: var(--font-display);
+    }
+
+    .deck-title {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ink-dim);
+    }
+
+    .deck-meta {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 0.82rem;
+      color: var(--ink-dim);
+    }
+
+    /* Deck Viewport */
+    main.deck-viewport {
+      flex: 1;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .slide {
+      position: absolute;
+      width: min(94vw, calc(83vh * 16 / 9));
+      height: min(83vh, calc(94vw * 9 / 16));
+      background: var(--surface-card);
+      border: 1px solid var(--border-card);
+      border-radius: 20px;
+      padding: 34px 44px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 25px 65px -15px rgba(0, 0, 0, 0.85), 0 0 45px -12px var(--purple-glow);
+      backdrop-filter: blur(16px);
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow-y: auto;
+    }
+
+    .slide.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1) translateY(0);
+      z-index: 10;
+    }
+
+    /* Typography */
+    .slide-eyebrow {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--purple-light);
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+    }
+
+    .slide-title {
+      font-family: var(--font-display);
+      font-size: 2.1rem;
+      color: var(--ink);
+      font-weight: 800;
+      line-height: 1.22;
+      margin-bottom: 18px;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.6);
+      text-transform: uppercase;
+    }
+
+    .slide-title span.grad-text {
+      background: linear-gradient(135deg, #F3EEF9 20%, var(--purple-light) 65%, var(--purple) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-title span.cyan-text {
+      background: linear-gradient(135deg, #FFF 10%, var(--cyan) 65%, #0891b2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .slide-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      font-size: 0.98rem;
+      line-height: 1.55;
+      color: var(--ink-dim);
+    }
+
+    /* Grids */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: start;
+    }
+
+    .grid-2-asym {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 26px;
+      align-items: start;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    /* Cards */
+    .step-card {
+      background: rgba(14, 7, 24, 0.7);
+      border: 1px solid rgba(192, 132, 252, 0.2);
+      border-radius: 14px;
+      padding: 16px 18px;
+      transition: all 0.25s ease;
+      position: relative;
+    }
+
+    .step-card:hover {
+      border-color: var(--purple-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px -6px var(--purple-glow);
+    }
+
+    .step-badge-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      background: var(--purple-dark);
+      color: var(--purple-bright);
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      border: 1px solid rgba(192, 132, 252, 0.4);
+    }
+
+    .card-heading {
+      font-family: var(--font-display);
+      font-size: 1.12rem;
+      color: var(--ink);
+      margin-bottom: 6px;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .card-text {
+      font-size: 0.86rem;
+      color: var(--ink-dim);
+      line-height: 1.48;
+    }
+
+    /* Code Blocks */
+    pre {
+      background: var(--code-bg);
+      border: 1px solid rgba(192, 132, 252, 0.22);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: #e2d9f3;
+      overflow-x: auto;
+      line-height: 1.5;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      color: var(--purple-bright);
+      background: rgba(168, 85, 247, 0.12);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.88em;
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+    }
+
+    .kw { color: #f472b6; font-weight: 600; }
+    .fn { color: #60a5fa; }
+    .str { color: #a7f3d0; }
+    .cm { color: #7c6f8f; font-style: italic; }
+    .cmd { color: #fcd34d; font-weight: 600; }
+
+    /* Pills */
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 99px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      font-family: var(--font-display);
+      letter-spacing: 0.4px;
+    }
+
+    .pill-purple {
+      background: rgba(168, 85, 247, 0.16);
+      border: 1px solid rgba(192, 132, 252, 0.45);
+      color: var(--purple-bright);
+    }
+
+    .pill-cyan {
+      background: rgba(6, 182, 212, 0.16);
+      border: 1px solid rgba(6, 182, 212, 0.45);
+      color: #67e8f9;
+    }
+
+    .pill-green {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+
+    /* List */
+    ul.process-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    ul.process-list li {
+      position: relative;
+      padding-left: 24px;
+      font-size: 0.92rem;
+      color: var(--ink-dim);
+    }
+
+    ul.process-list li::before {
+      content: "➔";
+      position: absolute;
+      left: 0;
+      top: 1px;
+      color: var(--cyan);
+      font-size: 0.95rem;
+    }
+
+    ul.process-list li strong {
+      color: var(--ink);
+    }
+
+    /* Notes */
+    .speaker-notes {
+      margin-top: auto;
+      background: rgba(10, 4, 18, 0.9);
+      border-left: 3px solid var(--purple);
+      padding: 8px 14px;
+      border-radius: 0 8px 8px 0;
+      font-size: 0.82rem;
+      color: #cbbce4;
+      display: none;
+    }
+
+    .speaker-notes.show {
+      display: block;
+    }
+
+    .speaker-notes-title {
+      font-weight: 700;
+      color: var(--purple-bright);
+      margin-bottom: 2px;
+      font-size: 0.74rem;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      font-family: var(--font-display);
+    }
+
+    /* Footer */
+    footer.deck-footer {
+      height: 54px;
+      padding: 0 28px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(192, 132, 252, 0.18);
+      background: rgba(14, 8, 24, 0.85);
+      backdrop-filter: blur(14px);
+      z-index: 100;
+    }
+
+    .btn-deck {
+      background: rgba(168, 85, 247, 0.12);
+      border: 1px solid rgba(192, 132, 252, 0.3);
+      color: var(--ink);
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: var(--font-display);
+      font-weight: 500;
+    }
+
+    .btn-deck:hover:not(:disabled) {
+      background: rgba(168, 85, 247, 0.28);
+      border-color: var(--purple-light);
+      color: #FFFFFF;
+      transform: translateY(-1px);
+    }
+
+    .btn-deck:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
+    .btn-deck.active {
+      background: var(--purple);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .progress-wrap {
+      flex: 1;
+      max-width: 320px;
+      margin: 0 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .progress-bar-bg {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--purple), var(--cyan));
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .slide-counter {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ink-dim);
+      min-width: 50px;
+      text-align: right;
+      font-family: var(--font-mono);
+    }
+
+    /* Print */
+    @media print {
+      body {
+        background: #09060E !important;
+        height: auto !important;
+        overflow: visible !important;
+      }
+      header.deck-header, footer.deck-footer {
+        display: none !important;
+      }
+      main.deck-viewport {
+        display: block !important;
+        padding: 0 !important;
+      }
+      .slide {
+        position: relative !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        page-break-after: always !important;
+        opacity: 1 !important;
+        visibility: visible !important;
+        transform: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        padding: 40px !important;
+      }
+      .speaker-notes {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="deck-header">
+    <div class="brand-group">
+      <span class="brand-badge">PORTFOLIO WORKFLOW GUIDE</span>
+      <span class="deck-title">QUY TRÌNH XÂY DỰNG PORTFOLIO TỪ GITHUB TEMPLATE ĐẾN DEPLOY</span>
+    </div>
+    <div class="deck-meta">
+      <span class="pill pill-cyan">🛠️ Thực Chiến Từng Bước</span>
+      <span class="pill pill-purple">🚀 GitHub Pages Zero-Cost</span>
+    </div>
+  </header>
+
+  <!-- MAIN SLIDES -->
+  <main class="deck-viewport">
+
+    <!-- SLIDE 1: COVER -->
+    <section class="slide active" data-slide="1">
+      <div class="slide-eyebrow">📋 HƯỚNG DẪN THỰC HÀNH TỪ ĐẦU ĐẾN CUỐI (STEP-BY-STEP WORKFLOW)</div>
+      <h1 class="slide-title">
+        Quy Trình Tạo Website Portfolio <span class="grad-text">Từ Template GitHub</span>
+      </h1>
+      <div class="slide-content">
+        <div class="grid-2-asym">
+          <div>
+            <p style="font-size: 1.1rem; color: var(--ink); margin-bottom: 16px; line-height: 1.6;">
+              Hướng dẫn tường minh quy trình từng bước dành cho người mới: Từ việc chọn và clone mẫu template từ GitHub về máy, khảo sát cấu trúc thư mục, chuẩn bị ảnh tài nguyên, sửa nội dung cá nhân, thay đổi dự án, đến kiểm thử và xuất bản website trực tuyến miễn phí.
+            </p>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 20px;">
+              <span class="pill pill-cyan">1. Clone Repo</span>
+              <span class="pill pill-purple">2. Run Local</span>
+              <span class="pill pill-purple">3. Thay Assets</span>
+              <span class="pill pill-purple">4. Sửa HTML/JS</span>
+              <span class="pill pill-green">5. Push GitHub</span>
+              <span class="pill pill-cyan">6. Deploy Pages</span>
+            </div>
+            <div style="font-size: 0.88rem; color: var(--ink-dim); line-height: 1.7;">
+              <div>• <strong>Mục tiêu:</strong> Có ngay website Portfolio hoạt động thực tế trong vòng 1 - 2 giờ</div>
+              <div>• <strong>Yêu cầu:</strong> Đã cài đặt Git và một trình soạn thảo mã (VS Code / Cursor)</div>
+            </div>
+          </div>
+
+          <div class="step-card" style="border-color: var(--purple-light);">
+            <div class="card-heading" style="color: var(--purple-bright); font-size: 1.05rem; margin-bottom: 10px;">
+              🗺️ 6 Giai Đoạn Thực Hiện
+            </div>
+            <ul class="process-list" style="font-size: 0.84rem; gap: 8px;">
+              <li><strong>Giai đoạn 1:</strong> Tìm & Clone Template từ GitHub về máy</li>
+              <li><strong>Giai đoạn 2:</strong> Khảo sát cấu trúc & Chạy thử trên máy cục bộ</li>
+              <li><strong>Giai đoạn 3:</strong> Chuẩn bị tư liệu cá nhân (Ảnh đại diện, minh chứng)</li>
+              <li><strong>Giai đoạn 4:</strong> Chỉnh sửa nội dung, kỹ năng & dự án trong code</li>
+              <li><strong>Giai đoạn 5:</strong> Kiểm thử hiển thị trên máy tính & điện thoại</li>
+              <li><strong>Giai đoạn 6:</strong> Tạo Repo mới & Xuất bản qua GitHub Pages</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Chào các bạn! Thay vì phải tự viết hàng ngàn dòng mã từ đầu, cách nhanh nhất và thông minh nhất để có một portfolio đẹp là chọn một template mở trên GitHub, sau đó tùy biến nội dung theo đúng năng lực của mình. Hôm nay mình sẽ hướng dẫn quy trình từng bước một.
+      </div>
+    </section>
+
+    <!-- SLIDE 2: ROADMAP -->
+    <section class="slide" data-slide="2">
+      <div class="slide-eyebrow">🗺️ TỔNG QUAN LỘ TRÌNH THỰC HIỆN</div>
+      <h2 class="slide-title">Lộ Trình <span class="cyan-text">Quy Trình 6 Bước</span> Chuẩn Chỉ</h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="step-card">
+            <span class="step-badge-num">01</span>
+            <div class="card-heading">Clone Template</div>
+            <div class="card-text">
+              Tìm một mẫu mã nguồn mở phù hợp trên GitHub, dùng lệnh <code>git clone</code> tải toàn bộ mã nguồn về máy tính cá nhân.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">02</span>
+            <div class="card-heading">Khảo Sát & Chạy Thử</div>
+            <div class="card-text">
+              Mở thư mục trên VS Code, bật máy chủ cục bộ bằng Live Server hoặc Python để xem trước website hoạt động ra sao.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">03</span>
+            <div class="card-heading">Chuẩn Bị Assets</div>
+            <div class="card-text">
+              Chọn ảnh chân dung sắc nét, chụp màn hình các dự án tâm đắc, lưu vào thư mục <code>assets/</code> và <code>projects/</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="grid-3" style="margin-top: 12px;">
+          <div class="step-card">
+            <span class="step-badge-num">04</span>
+            <div class="card-heading">Tùy Biến Code</div>
+            <div class="card-text">
+              Mở <code>index.html</code> để thay thế tên, tiêu đề, mảng dữ liệu dự án, kỹ năng, email và liên kết mạng xã hội cá nhân.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">05</span>
+            <div class="card-heading">Kiểm Thử (QA)</div>
+            <div class="card-text">
+              Bấm phím F12 kiểm tra giao diện trên màn hình điện thoại, kiểm tra toàn bộ link xem có bị lỗi 404 không.
+            </div>
+          </div>
+          <div class="step-card" style="border-color: var(--emerald);">
+            <span class="step-badge-num" style="background: #065f46; color: #6ee7b7;">06</span>
+            <div class="card-heading" style="color: #6ee7b7;">Deploy Lên Mạng</div>
+            <div class="card-text">
+              Đẩy mã nguồn lên GitHub cá nhân của bạn và bật tính năng GitHub Pages để nhận ngay đường link website trực tuyến miễn phí.
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Toàn bộ quy trình này được thiết kế theo tư duy Module hóa. Chúng ta đi từng bước tuần tự để tránh bị choáng ngợp trước một tệp mã nguồn lớn.
+      </div>
+    </section>
+
+    <!-- SLIDE 3: STEP 1 - CLONE REPO -->
+    <section class="slide" data-slide="3">
+      <div class="slide-eyebrow">📥 BƯỚC 1: TÌM & CLONE TEMPLATE TỪ GITHUB</div>
+      <h2 class="slide-title">Lấy Mã Nguồn Về Máy <span class="cyan-text">(Clone Repository)</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Cách 1: Dùng Lệnh Git Clone (Khuyên Dùng)</div>
+              <p class="card-text">
+                Mở Terminal (hoặc Git Bash / PowerShell) tại thư mục bạn muốn chứa dự án, gõ lệnh sau:
+              </p>
+              <pre style="margin-top: 8px;"><code><span class="cm"># Clone repository về máy tính</span>
+<span class="cmd">git clone</span> https://github.com/wings0520/My_portfolio.git
+
+<span class="cm"># Đi vào thư mục vừa tải về</span>
+<span class="cmd">cd</span> My_portfolio</code></pre>
+            </div>
+
+            <div class="step-card">
+              <div class="card-heading">Cách 2: Tải File ZIP (Dành cho người chưa cài Git)</div>
+              <p class="card-text">
+                Truy cập trang GitHub của template ➔ Bấm vào nút màu xanh lá cây <strong>Code</strong> ➔ Chọn <strong>Download ZIP</strong> ➔ Giải nén thư mục ra ổ đĩa máy tính.
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <div class="step-card" style="border-color: rgba(6, 182, 212, 0.4);">
+              <div class="card-heading" style="color: var(--cyan);">💡 Mẹo Quan Trọng: Ngắt Kết Nối Repo Cũ</div>
+              <p class="card-text" style="margin-bottom: 8px;">
+                Sau khi clone về, thư mục vẫn đang liên kết với tài khoản của tác giả gốc. Bạn cần xóa thư mục ẩn <code>.git</code> để bắt đầu một dự án mới hoàn toàn của bạn:
+              </p>
+              <pre><code><span class="cm"># Trên Windows (PowerShell):</span>
+<span class="cmd">Remove-Item -Recurse -Force .git</span>
+
+<span class="cm"># Trên Mac / Linux:</span>
+<span class="cmd">rm -rf .git</span>
+
+<span class="cm"># Khởi tạo lại Git mới tinh:</span>
+<span class="cmd">git init</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Việc xóa thư mục .git cũ rất quan trọng. Nó giúp bạn không bị xung đột lịch sử commit của người khác và sẵn sàng đẩy lên tài khoản GitHub mang tên chính bạn.
+      </div>
+    </section>
+
+    <!-- SLIDE 4: STEP 2 - LOCAL SERVER -->
+    <section class="slide" data-slide="4">
+      <div class="slide-eyebrow">💻 BƯỚC 2: KHẢO SÁT CẤU TRÚC & CHẠY THỬ CỤC BỘ</div>
+      <h2 class="slide-title">Khởi Chạy Website <span class="grad-text">Trên Máy Cục Bộ (Localhost)</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">3 Cách Chạy Thử Ngay Lập Tức</div>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.86rem;">
+                <li><strong>Cách 1: Mở thẳng file HTML</strong><br>
+                  Nhấp đúp vào <code>index.html</code> để mở trên Chrome/Edge (nhanh nhất).
+                </li>
+                <li><strong>Cách 2: Tiện ích Live Server (VS Code)</strong><br>
+                  Cài Extension <em>Live Server</em>, bấm chuột phải vào <code>index.html</code> ➔ Chọn <em>Open with Live Server</em>. Khi sửa code, trang web sẽ tự động tải lại!
+                </li>
+                <li><strong>Cách 3: Dùng Python HTTP Server</strong><br>
+                  Mở terminal gõ: <code>python -m http.server 8000</code> rồi vào <code>http://localhost:8000</code>.
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <div class="step-card">
+              <div class="card-heading" style="color: var(--purple-bright);">Phân Tích Cấu Trúc Thư Mục</div>
+              <pre><code>My_portfolio/
+├── index.html       <span class="cm"># File chính chứa mã nguồn HTML, CSS, JS</span>
+├── README.md        <span class="cm"># File hướng dẫn đọc trước</span>
+├── assets/          <span class="cm"># Nơi chứa ảnh cá nhân (Avatar, Background)</span>
+├── project 1/       <span class="cm"># Chứa 3 ảnh chụp màn hình dự án 1</span>
+├── project 2/       <span class="cm"># Chứa 3 ảnh chụp màn hình dự án 2</span>
+└── project 3/       <span class="cm"># Chứa 3 ảnh chụp màn hình dự án 3</span></code></pre>
+              <div style="font-size: 0.82rem; color: var(--ink-dim); margin-top: 6px;">
+                👉 <em>Bạn chỉ cần tập trung chỉnh sửa file <code>index.html</code> và thay các bức ảnh trong thư mục <code>assets/</code>!</em>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Khi mở file trên trình duyệt, hãy cuộn xem hết một lượt từ đầu đến chân trang để ghi chú lại những chỗ nào có tên và thông tin của người cũ cần thay thế.
+      </div>
+    </section>
+
+    <!-- SLIDE 5: STEP 3 - PREPARE ASSETS -->
+    <section class="slide" data-slide="5">
+      <div class="slide-eyebrow">🖼️ BƯỚC 3: CHUẨN BỊ TƯ LIỆU HÌNH ẢNH CÁ NHÂN</div>
+      <h2 class="slide-title">Chuẩn Bị Ảnh Đẹp <span class="cyan-text">& Đặt Đúng Thư Mục</span></h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="step-card">
+            <span class="step-badge-num">A</span>
+            <div class="card-heading">Ảnh Chân Dung (Portrait)</div>
+            <div class="card-text">
+              Chọn một tấm ảnh chụp bán thân rõ mặt, trang phục lịch sự. Đổi tên ảnh thành <code>about_portrait.png</code> và chép đè vào thư mục <code>assets/</code>.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">B</span>
+            <div class="card-heading">Ảnh Minh Chứng (Proofs)</div>
+            <div class="card-text">
+              Chuẩn bị 2-3 bức ảnh bằng chứng thật: Ảnh nhận bằng khen, học bổng, ảnh đi thi hackathon hoặc ảnh phòng lab. Chép vào thư mục <code>assets/</code>.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">C</span>
+            <div class="card-heading">Ảnh Chụp Dự Án (Projects)</div>
+            <div class="card-text">
+              Với mỗi dự án muốn khoe, chụp 3 ảnh màn hình giao diện sắc nét. Bỏ vào lần lượt các thư mục <code>project 1/</code>, <code>project 2/</code>, <code>project 3/</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card" style="margin-top: 10px; border-left: 4px solid var(--emerald);">
+          <strong style="color: var(--emerald);">Mẹo tối ưu dung lượng ảnh:</strong>
+          <span style="font-size: 0.88rem; margin-left: 6px;">
+            Dùng các công cụ miễn phí như <strong>TinyPNG</strong> (tinypng.com) hoặc chuyển ảnh sang định dạng <code>.webp</code> để giảm dung lượng file xuống dưới 200KB. Ảnh nhẹ sẽ giúp website tải cực nhanh!
+          </span>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Hình ảnh là yếu tố quyết định 60% vẻ đẹp của portfolio. Đừng dùng ảnh chụp mờ nhòe hay ảnh selfie méo mó. Hãy đầu tư ảnh chụp màn hình dự án có độ phân giải cao và ảnh chân dung nghiêm túc.
+      </div>
+    </section>
+
+    <!-- SLIDE 6: STEP 4 - CUSTOMIZE HERO -->
+    <section class="slide" data-slide="6">
+      <div class="slide-eyebrow">✍️ BƯỚC 4: SỬA THÔNG TIN ĐỊNH DANH TRÊN MÀN HÌNH HERO</div>
+      <h2 class="slide-title">Thay Đổi Tên, Tiêu Đề <span class="grad-text">& Khẩu Hiệu Nghề Nghiệp</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Mở File index.html và Tìm Các Dòng Sau:</div>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.86rem;">
+                <li><strong>Thẻ &lt;title&gt;:</strong> Đổi tiêu đề tab trình duyệt thành: <code>[Tên Bạn] — [Chuyên Môn]</code>.</li>
+                <li><strong>Tên hiển thị (.hero-name):</strong> Đổi <code>THÔNG ĐẶNG</code> thành tên của bạn.</li>
+                <li><strong>Chức danh (.name-role):</strong> Đổi thành vị trí bạn ứng tuyển (ví dụ: <em>Frontend Developer / Data Analyst / AI Engineer</em>).</li>
+                <li><strong>Huy hiệu trạng thái:</strong> Đổi trường đại học, năm tốt nghiệp (ví dụ: <em>HCMUT Scholar · 2026 Grad</em>).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm">&lt;!-- Sửa trong file index.html (Dòng ~2160) --&gt;</span>
+&lt;<span class="kw">div</span> class=<span class="str">"hero-identity"</span>&gt;
+  &lt;<span class="kw">h1</span> class=<span class="str">"hero-name"</span>&gt;
+    &lt;<span class="kw">span</span> class=<span class="str">"name-main"</span>&gt;<span class="cmd">NGUYỄN VĂN A</span>&lt;/<span class="kw">span</span>&gt;
+    &lt;<span class="kw">span</span> class=<span class="str">"name-role grad-text"</span>&gt;<span class="cmd">Fullstack Web Developer</span>&lt;/<span class="kw">span</span>&gt;
+  &lt;/<span class="kw">h1</span>&gt;
+&lt;/<span class="kw">div</span>&gt;
+
+<span class="cm">// Sửa câu slogan chữ động (Dòng ~2668)</span>
+<span class="kw">const</span> text = <span class="str">"<span class="cmd">Building modern, scalable web applications with pixel-perfect UI.</span>"</span>;</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Chỉ với vài thao tác sửa văn bản đơn giản, bạn đã biến toàn bộ phần mở đầu của website thành của riêng mình. Lưu file lại và bấm F5 trên trình duyệt là thấy ngay kết quả.
+      </div>
+    </section>
+
+    <!-- SLIDE 7: STEP 5 - BRANDING & COLORS -->
+    <section class="slide" data-slide="7">
+      <div class="slide-eyebrow">🎨 BƯỚC 5: TÙY BIẾN HỆ MÀU SẮC & THƯƠNG HIỆU CÁ NHÂN</div>
+      <h2 class="slide-title">Đổi Màu Sắc Phù Hợp <span class="cyan-text">Với Cá Tính Của Bạn</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Cách Đổi Màu Toàn Bộ Trang Web Trong 1 Phút</div>
+              <p class="card-text">
+                Tìm khối <code>:root { ... }</code> ở đầu phần <code>&lt;style&gt;</code> trong <code>index.html</code> (khoảng dòng 16 - 31). Bạn chỉ cần thay đổi 2 mã màu chính:
+              </p>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.85rem;">
+                <li><strong>Nếu thích phong cách Cyberpunk tím:</strong> Giữ nguyên <code>--purple: #A855F7</code>.</li>
+                <li><strong>Nếu thích phong cách Xanh Dương (Công nghệ / FinTech):</strong> Đổi thành <code>--purple: #0284C7</code> (Sky Blue) hoặc <code>#2563EB</code>.</li>
+                <li><strong>Nếu thích phong cách Xanh Lục (Hacker / Sinh thái):</strong> Đổi thành <code>--purple: #10B981</code> (Emerald).</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm">/* Chỉnh sửa mã màu trong index.html */</span>
+:root {
+  --bg: <span class="str">#09060E</span>;               <span class="cm">/* Nền đen */</span>
+  --surface: <span class="str">#120B1F</span>;          <span class="cm">/* Khối thẻ */</span>
+  
+  <span class="cm">/* Đổi mã màu chính của bạn ở đây: */</span>
+  --purple: <span class="cmd">#0284C7</span>;           <span class="cm">/* Màu bạn thích */</span>
+  --purple-light: <span class="cmd">#38BDF8</span>;
+  --purple-glow: <span class="str">rgba(2, 132, 199, 0.45)</span>;
+}
+
+<span class="cm">&lt;!-- Sửa logo chữ viết tắt 2 ký tự (Dòng ~2072) --&gt;</span>
+&lt;<span class="kw">span</span> class=<span class="str">"logo-badge"</span>&gt;<span class="cmd">NA</span>&lt;/<span class="kw">span</span>&gt; <span class="cm">&lt;!-- Ví dụ: Nguyễn An --&gt;</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Nhờ hệ thống biến CSS tokenized, bạn không cần phải lục tìm hàng trăm class màu trong file HTML. Chỉ cần đổi 1 biến ở :root, toàn bộ viền phát sáng, nút bấm và gradient chữ sẽ tự động đổi màu theo.
+      </div>
+    </section>
+
+    <!-- SLIDE 8: STEP 6 - CUSTOMIZE PROJECTS -->
+    <section class="slide" data-slide="8">
+      <div class="slide-eyebrow">📂 BƯỚC 6: THAY THẾ DỰ ÁN CỦA BẠN VÀO CODE</div>
+      <h2 class="slide-title">Cấu Hình Mảng Dữ Liệu <span class="grad-text">3 Dự Án Nổi Bật Nhất</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Tìm Mảng projects Trong JavaScript (Dòng ~3034)</div>
+              <p class="card-text">
+                Dự án được viết dưới dạng danh sách đối tượng JSON rất dễ hiểu. Bạn chỉ cần sửa lại các trường thông tin:
+              </p>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.85rem;">
+                <li><code>cat</code>: Thể loại dự án (Web App / Mobile / AI / Nghiên cứu).</li>
+                <li><code>title</code>: Tên dự án của bạn (viết hoa nổi bật).</li>
+                <li><code>sub</code>: Mô tả ngắn 1-2 câu về bài toán và kết quả đạt được.</li>
+                <li><code>imgs</code>: Đường dẫn đến 3 ảnh chụp màn hình trong thư mục.</li>
+                <li><code>link</code>: Link dẫn tới demo chạy thật hoặc mã nguồn GitHub.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="kw">const</span> projects = [
+  {
+    n: <span class="str">"01"</span>,
+    cat: <span class="str">"<span class="cmd">E-Commerce Web App</span>"</span>,
+    title: <span class="str">"<span class="cmd">FASHION SHOP 3D</span>"</span>,
+    sub: <span class="str">"<span class="cmd">Nền tảng mua sắm thời trang tích hợp thử đồ 3D tương tác.</span>"</span>,
+    meta: <span class="str">"<span class="cmd">React · Node.js</span>"</span>,
+    imgs: [
+      <span class="str">"project 1/screen1.png"</span>,
+      <span class="str">"project 1/screen2.png"</span>,
+      <span class="str">"project 1/screen3.png"</span>
+    ],
+    link: <span class="str">"<span class="cmd">https://github.com/username/project1</span>"</span>
+  },
+  <span class="cm">// Tương tự cho dự án 02 và 03...</span>
+];</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Hãy chọn ra 3 dự án bạn tự hào nhất và làm kỹ nhất. Số lượng không quan trọng bằng chất lượng. 3 dự án có ảnh chụp đẹp và giải thích rõ ràng sẽ ăn đứt việc liệt kê 10 dự án sơ sài.
+      </div>
+    </section>
+
+    <!-- SLIDE 9: STEP 7 - CUSTOMIZE SKILLS -->
+    <section class="slide" data-slide="9">
+      <div class="slide-eyebrow">⚡ BƯỚC 7: TÙY BIẾN DANH MỤC KỸ NĂNG & MARQUEE</div>
+      <h2 class="slide-title">Cập Nhật Kỹ Năng <span class="cyan-text">& Băng Chuyền Chạy Chữ</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">1. Sửa Mảng Kỹ Năng skills (Dòng ~3008)</div>
+              <p class="card-text">
+                Thay thế 5 nhóm kỹ năng phù hợp với chuyên ngành của bạn (ví dụ: Lập trình Frontend, Backend, Cơ sở dữ liệu, UI/UX Design, DevOps).
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="card-heading">2. Sửa Băng Chuyền skillWords (Dòng ~3100)</div>
+              <p class="card-text">
+                Đây là danh sách từ khóa chạy ngang qua màn hình. Hãy điền các công nghệ bạn thành thạo nhất (ví dụ: <em>JavaScript, React, Tailwind, Python, Docker, Figma...</em>).
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm">// Cập nhật mảng kỹ năng chính</span>
+<span class="kw">const</span> skills = [
+  { 
+    n: <span class="str">"01"</span>, 
+    name: <span class="str">"<span class="cmd">Frontend Engineering</span>"</span>, 
+    desc: <span class="str">"<span class="cmd">Xây dựng giao diện Responsive với React, Next.js và TailwindCSS.</span>"</span> 
+  },
+  { 
+    n: <span class="str">"02"</span>, 
+    name: <span class="str">"<span class="cmd">Backend & API Design</span>"</span>, 
+    desc: <span class="str">"<span class="cmd">Thiết kế RESTful APIs, xác thực JWT và cơ sở dữ liệu PostgreSQL.</span>"</span> 
+  }
+];
+
+<span class="cm">// Cập nhật các từ khóa chạy trên thanh Marquee</span>
+<span class="kw">const</span> skillWords = [
+  <span class="str">"<span class="cmd">TypeScript</span>"</span>, <span class="str">"<span class="cmd">React</span>"</span>, <span class="str">"<span class="cmd">Next.js</span>"</span>, <span class="str">"<span class="cmd">Tailwind</span>"</span>,
+  <span class="str">"<span class="cmd">Node.js</span>"</span>, <span class="str">"<span class="cmd">PostgreSQL</span>"</span>, <span class="str">"<span class="cmd">Git</span>"</span>, <span class="str">"<span class="cmd">Docker</span>"</span>
+];</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Mục kỹ năng cần nêu rõ bạn có thể làm được gì cụ thể với công nghệ đó, thay vì chỉ để những thanh đo phần trăm vô nghĩa như 'HTML 90%, CSS 80%'.
+      </div>
+    </section>
+
+    <!-- SLIDE 10: STEP 8 - ABOUT & CONTACT -->
+    <section class="slide" data-slide="10">
+      <div class="slide-eyebrow">📫 BƯỚC 8: CẬP NHẬT MỤC ABOUT ME & THÔNG TIN LIÊN HỆ</div>
+      <h2 class="slide-title">Cấu Hình Email <span class="grad-text">& Mạng Xã Hội Cá Nhân</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">1. Sửa Tiểu Sử bioText (Dòng ~3133)</div>
+              <p class="card-text">
+                Viết một đoạn văn 3-4 câu giới thiệu về bạn: Bạn đang học hoặc làm ở đâu, đam mê công nghệ gì và mục tiêu nghề nghiệp sắp tới là gì.
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="card-heading">2. Thay Toàn Bộ Link Liên Hệ</div>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.85rem;">
+                <li>Tìm kiếm từ khóa <code>thongdhce200113@gmail.com</code> trong file và thay bằng email của bạn.</li>
+                <li>Thay link GitHub: <code>https://github.com/your-username</code>.</li>
+                <li>Thay link LinkedIn: <code>https://linkedin.com/in/your-profile</code>.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm">// Sửa đoạn văn tự sự cá nhân (Dòng ~3133)</span>
+<span class="kw">const</span> bioText = <span class="str">"<span class="cmd">Tôi là lập trình viên đam mê xây dựng các sản phẩm web có tính tương tác cao. Tôi luôn chú trọng tối ưu hiệu năng và trải nghiệm người dùng trên từng chi tiết nhỏ.</span>"</span>;
+
+<span class="cm">&lt;!-- Sửa nút bấm liên hệ ở chân trang --&gt;</span>
+&lt;<span class="kw">a</span> href=<span class="str">"mailto:<span class="cmd">youremail@gmail.com</span>"</span> class=<span class="str">"contact-btn"</span>&gt;
+  Contact Me
+&lt;/<span class="kw">a</span>&gt;</code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Hãy chắc chắn rằng địa chỉ email và link GitHub của bạn hoạt động chính xác. Hãy click thử vào nút gửi email xem ứng dụng gửi thư trên máy có tự động mở ra hay không.
+      </div>
+    </section>
+
+    <!-- SLIDE 11: STEP 9 - TESTING -->
+    <section class="slide" data-slide="11">
+      <div class="slide-eyebrow">🧪 BƯỚC 9: KIỂM THỬ TRƯỚC KHI XUẤT BẢN (LOCAL QA)</div>
+      <h2 class="slide-title">Kiểm Tra Trên Điện Thoại <span class="cyan-text">& Sửa Lỗi Hiển Thị</span></h2>
+      <div class="slide-content">
+        <div class="grid-3">
+          <div class="step-card">
+            <span class="step-badge-num">1</span>
+            <div class="card-heading">Kiểm Tra Responsive (F12)</div>
+            <div class="card-text">
+              Nhấn <code>F12</code> trên Chrome ➔ Bấm vào biểu tượng điện thoại (Toggle Device Toolbar) ➔ Chọn iPhone hoặc iPad để kiểm tra xem chữ có bị tràn hay vỡ khung không.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">2</span>
+            <div class="card-heading">Kiểm Tra Lỗi Console (F12)</div>
+            <div class="card-text">
+              Vào tab <strong>Console</strong> trên DevTools. Đảm bảo không có dòng báo lỗi màu đỏ nào liên quan đến ảnh bị thiếu (404 Not Found) hoặc lỗi cú pháp JavaScript.
+            </div>
+          </div>
+          <div class="step-card">
+            <span class="step-badge-num">3</span>
+            <div class="card-heading">Bấm Thử Mọi Nút (Links Check)</div>
+            <div class="card-text">
+              Bấm thử menu trượt, nút chuyển mục (About, Skills, Projects, Contact) xem trang web có cuộn mượt mà đến đúng vị trí hay không.
+            </div>
+          </div>
+        </div>
+
+        <div class="step-card" style="margin-top: 12px; background: rgba(14, 7, 24, 0.9);">
+          <strong style="color: var(--cyan);">Tất cả đã hoàn tất?</strong>
+          <span style="font-size: 0.88rem; margin-left: 8px;">
+            Nếu website chạy trơn tru trên máy cục bộ, bạn đã sẵn sàng 100% để đưa nó lên mạng toàn cầu ở bước tiếp theo!
+          </span>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Hơn 60% nhà tuyển dụng mở xem portfolio trên điện thoại hoặc máy tính bảng trước khi mở trên máy tính. Vì vậy việc kiểm tra giao diện mobile là bắt buộc!
+      </div>
+    </section>
+
+    <!-- SLIDE 12: STEP 10 - PUSH TO GITHUB -->
+    <section class="slide" data-slide="12">
+      <div class="slide-eyebrow">🚀 BƯỚC 10: ĐẨY MÃ NGUỒN LÊN GITHUB CÁ NHÂN</div>
+      <h2 class="slide-title">Lưu Trữ Mã Nguồn <span class="grad-text">Bằng Git Terminal</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">1. Tạo Repository Mới Trên GitHub</div>
+              <p class="card-text">
+                Truy cập <a href="https://github.com/new" target="_blank" style="color: var(--cyan);">github.com/new</a>, đặt tên cho kho lưu trữ của bạn (ví dụ: <code>my-portfolio</code> hoặc <code>your-username.github.io</code>), chọn chế độ <strong>Public</strong>, rồi bấm <strong>Create repository</strong>.
+              </p>
+            </div>
+
+            <div class="step-card">
+              <div class="card-heading">2. Chạy Các Lệnh Git Sau Trong Terminal:</div>
+              <p class="card-text">
+                Lần lượt gõ 5 dòng lệnh sau tại thư mục dự án trên máy tính:
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm"># 1. Thêm tất cả các file vừa chỉnh sửa</span>
+<span class="cmd">git add .</span>
+
+<span class="cm"># 2. Lưu lại bản commit đầu tiên</span>
+<span class="cmd">git commit -m "feat: Launch my new personal portfolio"</span>
+
+<span class="cm"># 3. Đổi tên nhánh chính thành main</span>
+<span class="cmd">git branch -M main</span>
+
+<span class="cm"># 4. Gắn kết nối tới repo GitHub của bạn</span>
+<span class="cmd">git remote add origin https://github.com/your-username/my-portfolio.git</span>
+
+<span class="cm"># 5. Đẩy toàn bộ code lên mạng</span>
+<span class="cmd">git push -u origin main</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Sau khi chạy lệnh git push, toàn bộ code và ảnh của bạn đã được sao lưu an toàn trên đám mây của GitHub. Chúng ta chỉ còn 1 bước cuối cùng để bật trang web lên mạng!
+      </div>
+    </section>
+
+    <!-- SLIDE 13: STEP 11 - ENABLE GITHUB PAGES -->
+    <section class="slide" data-slide="13">
+      <div class="slide-eyebrow">🌐 BƯỚC 11: KÍCH HOẠT GITHUB PAGES (HOSTING MIỄN PHÍ)</div>
+      <h2 class="slide-title">Bật Website Trực Tuyến <span class="cyan-text">Chỉ Với 3 Cú Click</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Quy Trình Bật Hosting Trên GitHub:</div>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.86rem;">
+                <li><strong>1. Vào Settings:</strong> Trên trang GitHub của repository vừa tạo, bấm vào tab <strong>Settings</strong> ở thanh trên cùng.</li>
+                <li><strong>2. Chọn mục Pages:</strong> Ở cột menu bên trái, tìm và bấm vào mục <strong>Pages</strong>.</li>
+                <li><strong>3. Chọn nguồn xuất bản (Branch):</strong>
+                  Tại mục <em>Branch</em>, đổi từ <code>None</code> sang <code>main</code> (thư mục để nguyên <code>/(root)</code>) ➔ Bấm nút <strong>Save</strong>!
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <div class="step-card" style="border-color: var(--emerald);">
+              <span class="pill pill-green" style="margin-bottom: 8px;">🎉 Chúc mừng bạn!</span>
+              <div class="card-heading" style="color: #6ee7b7;">Website Chính Thức Hoạt Động</div>
+              <p class="card-text" style="margin-top: 6px;">
+                Sau khoảng 1 - 2 phút, GitHub sẽ hiển thị đường link trang web của bạn màu xanh:
+              </p>
+              <div style="background: rgba(0,0,0,0.5); padding: 10px; border-radius: 8px; margin: 10px 0; font-family: var(--font-mono); color: var(--cyan); font-size: 0.88rem;">
+                https://&lt;your-username&gt;.github.io/my-portfolio/
+              </div>
+              <p class="card-text">
+                Bất kỳ ai trên thế giới đều có thể truy cập đường link này trên máy tính lẫn điện thoại với chứng chỉ bảo mật HTTPS miễn phí vĩnh viễn!
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        GitHub Pages là dịch vụ máy chủ tuyệt vời. Bạn không cần thẻ tín dụng, không mất tiền thuê server mỗi tháng mà website vẫn có độ ổn định 99.99%.
+      </div>
+    </section>
+
+    <!-- SLIDE 14: STEP 12 - MAINTENANCE -->
+    <section class="slide" data-slide="14">
+      <div class="slide-eyebrow">🔄 BƯỚC 12: CÁCH CẬP NHẬT PORTFOLIO TRONG TƯƠNG LAI</div>
+      <h2 class="slide-title">Quy Trình <span class="grad-text">Thêm Dự Án Mới Định Kỳ</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Khi Có Thêm Dự Án Mới, Ta Làm Gì?</div>
+              <p class="card-text">
+                Portfolio không phải là thứ làm một lần rồi bỏ xó. Cứ mỗi khi bạn hoàn thành một bài tập lớn, một dự án freelance hay một chứng chỉ mới, hãy cập nhật ngay:
+              </p>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.85rem;">
+                <li>Chép ảnh mới vào thư mục <code>projects/</code>.</li>
+                <li>Mở file <code>index.html</code>, sửa lại thông tin dự án trong mảng <code>projects</code>.</li>
+                <li>Mở terminal và gõ 3 câu lệnh Git quen thuộc để đẩy bản mới lên mạng!</li>
+              </ul>
+            </div>
+          </div>
+
+          <div>
+            <pre><code><span class="cm"># 3 bước cập nhật website bất cứ lúc nào:</span>
+
+<span class="cm"># 1. Thêm các thay đổi mới</span>
+<span class="cmd">git add .</span>
+
+<span class="cm"># 2. Ghi chú nội dung vừa sửa</span>
+<span class="cmd">git commit -m "update: Add Project 4 & New Certificate"</span>
+
+<span class="cm"># 3. Đẩy lên GitHub</span>
+<span class="cmd">git push</span>
+
+<span class="cm"># 👉 GitHub Pages sẽ tự động cập nhật web sau 60 giây!</span></code></pre>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Chỉ cần nhớ 3 câu lệnh: git add, git commit, git push là bạn có thể cập nhật portfolio của mình mọi lúc mọi nơi một cách chuyên nghiệp như một lập trình viên thực thụ.
+      </div>
+    </section>
+
+    <!-- SLIDE 15: SUMMARY -->
+    <section class="slide" data-slide="15">
+      <div class="slide-eyebrow">🎯 TỔNG KẾT & LỜI KHUYÊN DÀNH CHO CV</div>
+      <h2 class="slide-title">Gắn Link Portfolio <span class="cyan-text">Vào CV & LinkedIn</span></h2>
+      <div class="slide-content">
+        <div class="grid-2">
+          <div>
+            <div class="step-card" style="margin-bottom: 12px;">
+              <div class="card-heading">Những Nơi Nên Đặt Link Portfolio:</div>
+              <ul class="process-list" style="margin-top: 8px; font-size: 0.85rem;">
+                <li><strong>Trên đầu bản CV PDF:</strong> Đặt ngay dưới tên và email kèm icon quả địa cầu: 🌐 <code>portfolio-link.com</code>.</li>
+                <li><strong>Phần giới thiệu trên LinkedIn:</strong> Đặt vào mục <em>Featured Link</em> để nhà tuyển dụng nhìn thấy đầu tiên.</li>
+                <li><strong>Chữ ký Email:</strong> Thêm dòng link portfolio dưới mỗi email gửi xin việc.</li>
+                <li><strong>Trang cá nhân GitHub:</strong> Đặt vào file <code>README.md</code> của profile GitHub.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="step-card" style="text-align: center; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 26px;">
+            <div style="font-size: 2.8rem; margin-bottom: 8px;">🚀✨</div>
+            <div style="font-family: var(--font-display); font-size: 1.5rem; color: var(--purple-bright); font-weight: 700; margin-bottom: 6px;">
+              BẮT ĐẦU CLONE & TẠO NGAY!
+            </div>
+            <p style="font-size: 0.88rem; color: var(--ink-dim); max-width: 320px; line-height: 1.5;">
+              <em>"Cơ hội việc làm tốt nhất sẽ tìm đến những người có sự chuẩn bị chu đáo và nổi bật nhất."</em>
+            </p>
+            <div style="margin-top: 14px; font-weight: 600; color: var(--ink); font-size: 0.95rem;">
+              ❓ Mời các bạn đặt câu hỏi về quy trình thực hiện!
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="speaker-notes">
+        <div class="speaker-notes-title">🎙️ Gợi ý thuyết trình:</div>
+        Đến đây là kết thúc quy trình hướng dẫn từng bước từ việc clone template trên GitHub về cho đến khi website hoạt động trực tuyến. Chúc các bạn áp dụng thành công và có một trang portfolio thật ưng ý!
+      </div>
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="deck-footer">
+    <div class="nav-btn-group" style="display: flex; gap: 8px;">
+      <button class="btn-deck" id="btnPrev" title="Slide trước (Phím ← hoặc PageUp)">
+        <span>◀ Trước</span>
+      </button>
+      <button class="btn-deck" id="btnNext" title="Slide tiếp (Phím →, Space hoặc PageDown)">
+        <span>Tiếp ▶</span>
+      </button>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" id="progressFill"></div>
+      </div>
+      <div class="slide-counter" id="slideCounter">1 / 15</div>
+    </div>
+
+    <div class="nav-btn-group" style="display: flex; gap: 8px;">
+      <button class="btn-deck" id="btnToggleNotes" title="Bật/Tắt gợi ý thuyết trình (Phím N)">
+        <span>🎙️ Ghi chú</span>
+      </button>
+      <button class="btn-deck" id="btnFullscreen" title="Toàn màn hình (Phím F hoặc F11)">
+        <span>⛶ Toàn màn hình</span>
+      </button>
+      <button class="btn-deck" onclick="window.print()" title="Xuất ra file PDF bài thuyết trình (Ctrl+P)">
+        <span>🖨️ Xuất PDF</span>
+      </button>
+    </div>
+  </footer>
+
+  <!-- SCRIPT -->
+  <script>
+    (function() {
+      const slides = document.querySelectorAll('.slide');
+      const totalSlides = slides.length;
+      let currentIdx = 0;
+      let showNotes = false;
+
+      const counterEl = document.getElementById('slideCounter');
+      const progressFill = document.getElementById('progressFill');
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const btnNotes = document.getElementById('btnToggleNotes');
+      const btnFs = document.getElementById('btnFullscreen');
+
+      function updateSlide(index) {
+        if (index < 0) index = 0;
+        if (index >= totalSlides) index = totalSlides - 1;
+        currentIdx = index;
+
+        slides.forEach((s, i) => {
+          if (i === currentIdx) {
+            s.classList.add('active');
+          } else {
+            s.classList.remove('active');
+          }
+        });
+
+        counterEl.textContent = `${currentIdx + 1} / ${totalSlides}`;
+        const pct = ((currentIdx + 1) / totalSlides) * 100;
+        progressFill.style.width = `${pct}%`;
+
+        btnPrev.disabled = currentIdx === 0;
+        btnNext.disabled = currentIdx === totalSlides - 1;
+      }
+
+      function next() {
+        if (currentIdx < totalSlides - 1) updateSlide(currentIdx + 1);
+      }
+
+      function prev() {
+        if (currentIdx > 0) updateSlide(currentIdx - 1);
+      }
+
+      function toggleNotes() {
+        showNotes = !showNotes;
+        btnNotes.classList.toggle('active', showNotes);
+        document.querySelectorAll('.speaker-notes').forEach(el => {
+          el.classList.toggle('show', showNotes);
+        });
+      }
+
+      function toggleFs() {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().catch(err => {
+            console.warn('Fullscreen error:', err);
+          });
+        } else {
+          document.exitFullscreen();
+        }
+      }
+
+      btnPrev.addEventListener('click', prev);
+      btnNext.addEventListener('click', next);
+      btnNotes.addEventListener('click', toggleNotes);
+      btnFs.addEventListener('click', toggleFs);
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'PageDown') {
+          e.preventDefault();
+          next();
+        } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+          e.preventDefault();
+          prev();
+        } else if (e.key === 'Home') {
+          e.preventDefault();
+          updateSlide(0);
+        } else if (e.key === 'End') {
+          e.preventDefault();
+          updateSlide(totalSlides - 1);
+        } else if (e.key.toLowerCase() === 'n') {
+          e.preventDefault();
+          toggleNotes();
+        } else if (e.key.toLowerCase() === 'f') {
+          e.preventDefault();
+          toggleFs();
+        }
+      });
+
+      // Mobile Touch Swipe
+      let touchStartX = 0;
+      window.addEventListener('touchstart', (e) => {
+        touchStartX = e.changedTouches[0].screenX;
+      }, { passive: true });
+
+      window.addEventListener('touchend', (e) => {
+        const touchEndX = e.changedTouches[0].screenX;
+        const diff = touchEndX - touchStartX;
+        if (diff < -50) next();
+        if (diff > 50) prev();
+      }, { passive: true });
+
+      updateSlide(0);
+    })();
+  </script>
+</body>
+</html>
